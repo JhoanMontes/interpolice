@@ -7,4 +7,4 @@ const r = Router();
 r.post('/login', login);
 r.post('/seed-admin', seedAdmin);
 
-export default r;  // 👈 necesario
+export default r; 
