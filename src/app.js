@@ -16,17 +16,13 @@ const __dirname = path.dirname(__filename);
 
 export const app = express();
 
-// Middlewares globales
+
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Archivos estáticos (fotos y QR generados)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-
-// Límite básico de peticiones
 app.use('/api/', rateLimit({ windowMs: 60_000, max: 100 }));
 
 // Rutas principales
