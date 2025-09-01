@@ -1,69 +1,69 @@
-import { Ciudadano } from '../models/index.js';
-import { generarQR } from '../services/qr.js';
+// src/controllers/ciudadano.controller.js
+import { ciudadanoService } from '../services/ciudadano.service.js';
 
-
-const base = process.env.BASE_URL || 'http://localhost:3000';
-
-
-export async function createCiudadano(req, res) {
-const data = req.body;
-if (req.file) data.foto = `/${req.file.path.replace(/\\/g,'/')}`;
-
-
-const url = `${base}/api/ciudadanos/codigo/${encodeURIComponent(data.codigo)}`;
-const qrPath = await generarQR(url, `ciudadano-${data.codigo}`);
-data.qr = `/${qrPath.replace(/\\/g,'/')}`;
-
-
-const nuevo = await Ciudadano.create(data);
-res.status(201).json(nuevo);
+export async function createCiudadano(req, res, next) {
+  try {
+    const nuevo = await ciudadanoService.crear(req.body, req.file);
+    res.status(201).json(nuevo);
+  } catch (error) {
+    next(error); // Pasamos el error al manejador central
+  }
 }
 
-
-export async function listCiudadanos(req, res) {
-const list = await Ciudadano.findAll({ order: [['id','DESC']] });
-res.json(list);
+export async function listCiudadanos(req, res, next) {
+  try {
+    const lista = await ciudadanoService.obtenerTodos();
+    res.json(lista);
+  } catch (error) {
+    next(error);
+  }
 }
 
-
-export async function getCiudadano(req, res) {
-const { id } = req.params;
-const item = await Ciudadano.findByPk(id);
-if (!item) return res.status(404).json({ error: 'No existe' });
-res.json(item);
+export async function getCiudadano(req, res, next) {
+  try {
+    const item = await ciudadanoService.obtenerPorId(req.params.id);
+    res.json(item);
+  } catch (error) {
+    // Podríamos manejar errores específicos aquí si quisiéramos
+    if (error.message === 'Ciudadano no encontrado') {
+      return res.status(404).json({ error: error.message });
+    }
+    next(error);
+  }
 }
 
-
-export async function getByCodigo(req, res) {
-const { codigo } = req.params;
-const item = await Ciudadano.findOne({ where: { codigo } });
-if (!item) return res.status(404).json({ error: 'No existe' });
-res.json(item);
+export async function getByCodigo(req, res, next) {
+  try {
+    const item = await ciudadanoService.obtenerPorCodigo(req.params.codigo);
+    res.json(item);
+  } catch (error) {
+    if (error.message === 'Ciudadano no encontrado') {
+      return res.status(404).json({ error: error.message });
+    }
+    next(error);
+  }
 }
 
-
-export async function updateCiudadano(req, res) {
-const { id } = req.params;
-const item = await Ciudadano.findByPk(id);
-if (!item) return res.status(404).json({ error: 'No existe' });
-
-
-const data = req.body;
-if (req.file) data.foto = `/${req.file.path.replace(/\\/g,'/')}`;
-if (data.codigo && data.codigo !== item.codigo) {
-const url = `${base}/api/ciudadanos/codigo/${encodeURIComponent(data.codigo)}`;
-const qrPath = await generarQR(url, `ciudadano-${data.codigo}`);
-data.qr = `/${qrPath.replace(/\\/g,'/')}`;
-}
-await item.update(data);
-res.json(item);
+export async function updateCiudadano(req, res, next) {
+  try {
+    const item = await ciudadanoService.actualizar(req.params.id, req.body, req.file);
+    res.json(item);
+  } catch (error) {
+    if (error.message === 'Ciudadano no encontrado') {
+      return res.status(404).json({ error: error.message });
+    }
+    next(error);
+  }
 }
 
-
-export async function deleteCiudadano(req, res) {
-const { id } = req.params;
-const item = await Ciudadano.findByPk(id);
-if (!item) return res.status(404).json({ error: 'No existe' });
-await item.destroy();
-res.json({ ok: true });
+export async function deleteCiudadano(req, res, next) {
+  try {
+    const resultado = await ciudadanoService.eliminar(req.params.id);
+    res.json(resultado);
+  } catch (error) {
+    if (error.message === 'Ciudadano no encontrado') {
+      return res.status(404).json({ error: error.message });
+    }
+    next(error);
+  }
 }
