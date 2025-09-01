@@ -5,6 +5,11 @@
 Todas las rutas están prefijadas con /api.
 Ejemplo:
 
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. Id of item to fetch |
+
+#### add(num1, num2)
     http://localhost:3000/api/auth/login
 
 🔑 Autenticación
