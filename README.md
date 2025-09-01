@@ -1,149 +1,126 @@
-📖 Referencia de la API “INTERPOLICE”
+Claro, aquí tienes el texto con las tablas convertidas al formato que solicitaste.
 
-🌐 URL Base
+===================================   REFERENCIA DE LA API "INTERPOLICE"
+URL Base: Todas las rutas están prefijadas con /api.
+          Ejemplo: http://localhost:3000/api/auth/login
 
-Todas las rutas están prefijadas con /api.
-Ejemplo:
+Autenticación: Las rutas protegidas requieren un Bearer Token en la
+             cabecera 'Authorization'.
+             Ejemplo: Authorization: Bearer <TU_TOKEN_JWT>
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
-
-#### add(num1, num2)
-    http://localhost:3000/api/auth/login
-
-🔑 Autenticación
-
-Las rutas protegidas requieren un Bearer Token en la cabecera
-Authorization.
-Ejemplo:
-
-    Authorization: Bearer <TU_TOKEN_JWT>
-
-------------------------------------------------------------------------
-
-🔐 Autenticación
-
+Autenticación
 Iniciar Sesión (Login)
+    POST /api/auth/login
 
-    POST /api/auth/login
+Autentica a un usuario y devuelve un token JWT si las credenciales son correctas.
 
-Autentica a un usuario y devuelve un token JWT si las credenciales son
-correctas.
-
-Body (application/json): | Parámetro | Tipo | Requerido | Descripción |
-|———–|——–|———–|————————| | email | string | ✔️ | Email del usuario | |
-password | string | ✔️ | Contraseña del usuario |
-
-------------------------------------------------------------------------
+Body (application/json)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| email | string | Required. Email del usuario. |
+| password | string | Required. Contraseña del usuario. |
 
 Crear Usuario Administrador (Seed)
+    POST /api/auth/seed-admin
 
-    POST /api/auth/seed-admin
+Crea el usuario administrador inicial si no existe. Es una ruta de
+configuración para el primer uso. No requiere cuerpo ni autenticación.
 
-Crea el usuario administrador inicial si no existe.
-Es una ruta de configuración para el primer uso.
-⚠️ No requiere cuerpo ni autenticación.
-
-------------------------------------------------------------------------
-
-👤 Ciudadanos
-
+Ciudadanos
 Listar todos los Ciudadanos
-
-    GET /api/ciudadanos
+    GET /api/ciudadanos
 
 Obtiene una lista de todos los ciudadanos registrados.
 
-Headers: | Parámetro | Tipo | Requerido | Descripción |
-|—————|——–|———–|————————————-| | Authorization | string | ✔️ | Bearer
-token del usuario autenticado |
-
-------------------------------------------------------------------------
+Cabeceras (Headers)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| Authorization | string | Required. Bearer token del usuario autenticado. |
 
 Obtener Ciudadano por Código (Público)
+    GET /api/ciudadanos/codigo/:codigo
 
-    GET /api/ciudadanos/codigo/:codigo
+Obtiene los datos de un ciudadano a través de su código único. Este
+endpoint es público para ser usado con el QR.
 
-Obtiene los datos de un ciudadano a través de su código único.
-Este endpoint es público (pensado para uso con QR).
-
-Path Params: | Parámetro | Tipo | Requerido | Descripción |
-|———–|——–|———–|————————————-| | codigo | string | ✔️ | Código único del
-ciudadano a buscar |
-
-------------------------------------------------------------------------
+Parámetros de Ruta (Path Parameters)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| codigo | string | Required. El código único del ciudadano a buscar. |
 
 Obtener Ciudadano por ID
-
-    GET /api/ciudadanos/:id
+    GET /api/ciudadanos/:id
 
 Obtiene los datos de un ciudadano a través de su ID de base de datos.
 
-Headers: | Parámetro | Tipo | Requerido | Descripción |
-|—————|——–|———–|————————————-| | Authorization | string | ✔️ | Bearer
-token del usuario autenticado |
+Cabeceras (Headers)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| Authorization | string | Required. Bearer token del usuario autenticado. |
 
-Path Params: | Parámetro | Tipo | Requerido | Descripción |
-|———–|———|———–|——————————| | id | integer | ✔️ | ID del ciudadano a
-buscar |
-
-------------------------------------------------------------------------
+Parámetros de Ruta (Path Parameters)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| id | integer | Required. El ID del ciudadano a buscar. |
 
 Crear un nuevo Ciudadano
+    POST /api/ciudadanos
 
-    POST /api/ciudadanos
+Registra un nuevo ciudadano. La petición debe ser de tipo 'multipart/form-data'
+para poder incluir la foto.
 
-Registra un nuevo ciudadano. La petición debe ser de tipo
-multipart/form-data para poder incluir la foto.
+Cabeceras (Headers)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| Authorization | string | Required. Bearer token del usuario autenticado. |
 
-Headers: | Parámetro | Tipo | Requerido | Descripción |
-|—————|——–|———–|————————————-| | Authorization | string | ✔️ | Bearer
-token del usuario autenticado |
-
-Body (multipart/form-data): | Parámetro | Tipo | Requerido | Descripción
-| |———–|——–|———–|———————————-| | nombre | string | ✔️ | Nombre completo
-| | email | string | ✔️ | Email único | | codigo | string | ✔️ | Código
-único | | foto | file | Opcional | Archivo de imagen para el perfil |
-
-------------------------------------------------------------------------
+Cuerpo (Body - multipart/form-data)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| nombre | string | Required. Nombre completo. |
+| email | string | Required. Email único. |
+| codigo | string | Required. Código único. |
+| foto | file | Optional. Archivo de imagen para el perfil. |
 
 Actualizar un Ciudadano
+    PUT /api/ciudadanos/:id
 
-    PUT /api/ciudadanos/:id
+Actualiza los datos de un ciudadano existente. La petición debe ser
+'multipart/form-data' si se va a actualizar la foto.
 
-Actualiza los datos de un ciudadano existente.
-La petición debe ser multipart/form-data si se va a actualizar la foto.
+Permisos: Requiere rol de 'admin' o 'policia'.
 
-🔒 Permisos: Requiere rol de admin o policia.
+Cabeceras (Headers)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| Authorization | string | Required. Bearer token del usuario autenticado. |
 
-Headers: | Parámetro | Tipo | Requerido | Descripción |
-|—————|——–|———–|————————————-| | Authorization | string | ✔️ | Bearer
-token del usuario autenticado |
+Parámetros de Ruta (Path Parameters)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| id | integer | Required. El ID del ciudadano a actualizar. |
 
-Path Params: | Parámetro | Tipo | Requerido | Descripción |
-|———–|———|———–|————————————-| | id | integer | ✔️ | ID del ciudadano a
-actualizar |
-
-Body (multipart/form-data): | Parámetro | Tipo | Requerido | Descripción
-| |———–|——–|———–|———————| | nombre | string | Opcional | Nuevo nombre |
-| email | string | Opcional | Nuevo email | | codigo | string | Opcional
-| Nuevo código | | foto | file | Opcional | Nueva foto |
-
-------------------------------------------------------------------------
+Cuerpo (Body - multipart/form-data)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| nombre | string | Optional. Nuevo nombre. |
+| email | string | Optional. Nuevo email. |
+| codigo | string | Optional. Nuevo código. |
+| foto | file | Optional. Nueva foto. |
 
 Eliminar un Ciudadano
-
-    DELETE /api/ciudadanos/:id
+    DELETE /api/ciudadanos/:id
 
 Elimina un ciudadano del sistema.
 
-🔒 Permisos: Requiere rol de admin.
+Permisos: Requiere rol de 'admin'.
 
-Headers: | Parámetro | Tipo | Requerido | Descripción |
-|—————|——–|———–|————————————-| | Authorization | string | ✔️ | Bearer
-token del usuario autenticado |
+Cabeceras (Headers)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| Authorization | string | Required. Bearer token del usuario autenticado. |
 
-Path Params: | Parámetro | Tipo | Requerido | Descripción |
-|———–|———|———–|——————————-| | id | integer | ✔️ | ID del ciudadano a
-eliminar |
+Parámetros de Ruta (Path Parameters)
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| id | integer | Required. El ID del ciudadano a eliminar. |
