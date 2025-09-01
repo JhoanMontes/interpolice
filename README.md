@@ -1,5 +1,5 @@
-===================================
-  REFERENCIA DE LA API "INTERPOLICE"
+
+API "INTERPOLICE"
 ===================================
 
 URL Base: Todas las rutas están prefijadas con /api.
