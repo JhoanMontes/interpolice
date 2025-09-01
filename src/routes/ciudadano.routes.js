@@ -34,5 +34,5 @@ r.put('/:id',
 );
 r.delete('/:id', authRequired, hasRole('admin'), deleteCiudadano);
 
-// 👇 importante para poder importarlo como default
+
 export default r;
