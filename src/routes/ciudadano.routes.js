@@ -11,6 +11,7 @@ import {
   updateCiudadano,
   deleteCiudadano
 } from '../controllers/ciudadano.controller.js';
+import { crearCiudadanoValidator, actualizarCiudadanoValidator } from '../middlewares/validators/ciudadano.validator.js';
 
 const r = Router();
 
@@ -18,8 +19,19 @@ r.get('/', authRequired, listCiudadanos);
 r.get('/codigo/:codigo', getByCodigo); // público (para QR)
 r.get('/:id', authRequired, getCiudadano);
 
-r.post('/', authRequired, upload.single('foto'), createCiudadano);
-r.put('/:id', authRequired, hasRole('admin','policia'), upload.single('foto'), updateCiudadano);
+r.post('/',
+  authRequired,
+  upload.single('foto'),
+  crearCiudadanoValidator,
+  createCiudadano
+);
+r.put('/:id',
+  authRequired,
+  hasRole('admin', 'policia'),
+  upload.single('foto'),
+  actualizarCiudadanoValidator,
+  updateCiudadano
+);
 r.delete('/:id', authRequired, hasRole('admin'), deleteCiudadano);
 
 // 👇 importante para poder importarlo como default
